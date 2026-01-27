@@ -28,11 +28,13 @@ The flash memory is partitioned as follows:
 
 | Memory Region | Start Address | Size | Description |
 |--------------|---------------|------|-------------|
-| **Bootloader** | 0x08000000 | 16KB | Bootloader code (0x4000 bytes) |
-| **Application** | 0x08004400 | 47KB | Application firmware |
+| **Bootloader** | 0x08000000 | 16KB | Bootloader code |
+| **Reserved** | 0x08004000 | 1KB | Reserved space |
+| **Application** | 0x08004400 | ~47KB | Application firmware (48,128 bytes) |
 
 - **Bootloader Region**: `0x08000000 - 0x08003FFF` (16KB)
-- **Application Region**: `0x08004400 - 0x0800FFFF` (47KB)
+- **Reserved Region**: `0x08004000 - 0x080043FF` (1KB - Reserved)
+- **Application Region**: `0x08004400 - 0x0800FFFF` (~47KB / 48,128 bytes)
 - **RAM**: `0x20000000 - 0x20004FFF` (20KB) - Shared between bootloader and application
 
 ## 📁 Project Structure
@@ -171,7 +173,7 @@ The bootloader uses a custom protocol for firmware updates:
 - **Baud Rate**: 115200
 - **Data Format**: 8 data bits, No parity, 1 stop bit (8N1)
 - **Block Size**: 1024 bytes (1KB)
-- **Maximum Firmware Size**: 48KB (47KB usable)
+- **Maximum Firmware Size**: 48KB (actual available: ~47KB)
 
 ### Communication Sequence
 
@@ -216,13 +218,13 @@ Replace this with your own application code while maintaining the memory layout.
 | **No response from bootloader** | Verify bootloader is flashed correctly at 0x08000000 |
 | **Application doesn't start** | Verify application flash address is 0x08004400 |
 | **Serial port errors** | Ensure no other program is using the COM port |
-| **File size too large** | Application must be < 48KB |
+| **File size too large** | Application must be ≤ 48KB (47KB recommended) |
 
 ## 📝 Version Information
 
 - **Bootloader Version**: v1.0
 - **Application Version**: v0.1
-- **Maximum Application Size**: 48KB
+- **Maximum Application Size**: 48KB (47KB actual available space)
 
 ## 📄 License
 
