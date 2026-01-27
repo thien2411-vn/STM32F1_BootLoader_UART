@@ -65,12 +65,6 @@ Feel free to fork this repository and propose new features or fixes via pull req
 
 ---
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
 ## Acknowledgements
 
 Special thanks to the open-source communities for offering tools, examples, and documentation that made this development a success!
