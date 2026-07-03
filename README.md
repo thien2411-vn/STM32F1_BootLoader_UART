@@ -25,6 +25,42 @@ block-beta
 1. **Bootloader Region**: Starts at `0x08000000`. This is the first code executed upon reset. It initializes hardware, checks for firmware update requests, and either jumps to the application or enters update mode.
 2. **Application Region**: Starts at `0x08004000`. The interrupt vector table must be relocated here.
 
+## Bootloader Update Sequence
+
+![Bootloader Sequence](Sequence_Bootloader.png)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant PCTool as PC Tool
+    participant Bootloader as STM32 Bootloader
+    participant Flash as Application Flash
+    participant App as Main Application
+
+    User->>PCTool: Select COM port and application firmware
+    User->>Bootloader: Reset MCU into bootloader
+    Bootloader->>Bootloader: Initialize clock, GPIO, and UART
+    Bootloader->>Bootloader: Check update request condition
+
+    alt Update requested
+        PCTool->>Bootloader: Start firmware transfer over UART
+        Bootloader->>PCTool: Acknowledge update mode
+        Bootloader->>Flash: Erase application region from 0x08004000
+        loop For each firmware chunk
+            PCTool->>Bootloader: Send packet with payload and checksum
+            Bootloader->>Bootloader: Validate packet integrity
+            Bootloader->>Flash: Program firmware chunk
+            Bootloader-->>PCTool: Send ACK or retry request
+        end
+        Bootloader->>Bootloader: Verify application vector table
+        Bootloader->>App: Set MSP, relocate VTOR, and jump to 0x08004000
+    else No update requested
+        Bootloader->>Bootloader: Validate existing application
+        Bootloader->>App: Jump to current application
+    end
+```
+
 ## System Workflow
 1. **Reset**: MCU boots into the Bootloader.
 2. **Check Status**: Bootloader checks a specific memory address or a GPIO pin state to determine if an update is requested.
