@@ -6,6 +6,7 @@
 A lightweight, robust, and highly efficient custom Bootloader designed for STM32F1 microcontrollers, using UART for firmware updates. This project demonstrates deep understanding of ARM Cortex-M architecture, memory management, and bare-metal programming.
 
 ## Features
+
 - **Bare-metal C Implementation**: Minimal memory footprint, optimized for STM32F103 series.
 - **Reliable UART Protocol**: Custom packet structure with verification to ensure firmware integrity during serial updates.
 - **Application Branching**: Safely vectorizes and jumps from the Bootloader memory space to the Main Application space.
@@ -29,39 +30,8 @@ block-beta
 
 ![Bootloader Sequence](Sequence_Bootloader.png)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User
-    participant PCTool as PC Tool
-    participant Bootloader as STM32 Bootloader
-    participant Flash as Application Flash
-    participant App as Main Application
-
-    User->>PCTool: Select COM port and application firmware
-    User->>Bootloader: Reset MCU into bootloader
-    Bootloader->>Bootloader: Initialize clock, GPIO, and UART
-    Bootloader->>Bootloader: Check update request condition
-
-    alt Update requested
-        PCTool->>Bootloader: Start firmware transfer over UART
-        Bootloader->>PCTool: Acknowledge update mode
-        Bootloader->>Flash: Erase application region from 0x08004000
-        loop For each firmware chunk
-            PCTool->>Bootloader: Send packet with payload and checksum
-            Bootloader->>Bootloader: Validate packet integrity
-            Bootloader->>Flash: Program firmware chunk
-            Bootloader-->>PCTool: Send ACK or retry request
-        end
-        Bootloader->>Bootloader: Verify application vector table
-        Bootloader->>App: Set MSP, relocate VTOR, and jump to 0x08004000
-    else No update requested
-        Bootloader->>Bootloader: Validate existing application
-        Bootloader->>App: Jump to current application
-    end
-```
-
 ## System Workflow
+
 1. **Reset**: MCU boots into the Bootloader.
 2. **Check Status**: Bootloader checks a specific memory address or a GPIO pin state to determine if an update is requested.
 3. **Firmware Update (if requested)**:
@@ -73,18 +43,22 @@ sequenceDiagram
 ## Setup & Usage
 
 ### 1. Compile the Firmware
+
 - Import the `Bootloader` project into **STM32CubeIDE**.
 - Build to generate the `Bootloader.bin`.
 - Do the same for the `Application` project, ensuring the linker script (`.ld`) is modified to start at `0x08004000`.
 
 ### 2. Flashing
+
 - Flash the `Bootloader.bin` to the MCU at `0x08000000` using ST-Link.
 - Run the PC Tool provided in the `PcTool/` directory, select your COM port, and upload `Application.bin`.
 
 ## Repository Structure
+
 - `/Bootloader`: The bootloader firmware source code.
 - `/Application`: A sample user application demonstrating the relocated vector table.
 - `/PcTool`: Host script/software for transmitting the binary payload.
 
 ---
+
 *Created to demonstrate embedded systems expertise, low-level microcontroller initialization, and communication protocols.*
