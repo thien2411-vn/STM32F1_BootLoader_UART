@@ -20,11 +20,12 @@ Understanding the flash memory layout is critical for this bootloader. The STM32
 block-beta
   columns 1
   Bootloader["Bootloader (0x0800 0000 - 0x0800 3FFF)\n16 KB"]
-  Application["Main Application (0x0800 4000 - 0x0801 FFFF)\n112 KB"]
+  Padding["Reserved/Padding (0x0800 4000 - 0x0800 43FF)\n1 KB"]
+  Application["Main Application (0x0800 4400 - 0x0800 FFFF)\n47 KB"]
 ```
 
 1. **Bootloader Region**: Starts at `0x08000000`. This is the first code executed upon reset. It initializes hardware, checks for firmware update requests, and either jumps to the application or enters update mode.
-2. **Application Region**: Starts at `0x08004000`. The interrupt vector table must be relocated here.
+2. **Application Region**: Starts at `0x08004400`. The interrupt vector table must be relocated here.
 
 ## Bootloader Update Sequence
 
