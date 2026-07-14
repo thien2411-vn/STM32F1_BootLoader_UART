@@ -51,7 +51,7 @@ block-beta
 
 ### 2. Flashing
 
-- Flash the `Bootloader.bin` to the MCU at `0x08000000` using ST-Link.
+- Flash the `Bootloader.bin` to the MCU at `0x08000000` using UART.
 - Run the PC Tool provided in the `PcTool/` directory, select your COM port, and upload `Application.bin`.
 
 ## Repository Structure
